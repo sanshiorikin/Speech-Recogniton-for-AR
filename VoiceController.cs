@@ -12,8 +12,14 @@ public class VoiceController : MonoBehaviour
 
     const string LANG_CODE = "fil-PH";
 
+    private TextToSpeech textToSpeech;
+    private SpeechToText speechToText;
+
     void Start()
     {
+
+        textToSpeech = new TextToSpeech();
+        speechToText = new SpeechToText();
 
         Setup(LANG_CODE);
 
@@ -33,8 +39,6 @@ public class VoiceController : MonoBehaviour
     #region Speech To Text
     public void StartListening()
     {
-#if UNITY_ANDROID
-
         if (Permission.HasUserAuthorizedPermission(Permission.Microphone))
         {
             StartRecognition(); 
@@ -43,9 +47,6 @@ public class VoiceController : MonoBehaviour
         {
             Debug.LogError("Microphone permission not granted.");
         }
-#else
-        StartRecognition();
-#endif
     }
 
     private void StartRecognition()
@@ -68,17 +69,7 @@ public class VoiceController : MonoBehaviour
     private void Setup(string languageCode)
     {
 
-        TextToSpeech.Instance.Setting(languageCode, 1, 1); 
-        SpeechToText.Instance.Setting(languageCode);
-
-        SpeechToText.Instance.onResultCallback = OnSpeechRecognized;
-        SpeechToText.Instance.onPartialCallback = OnPartialSpeechResult;
-
-    }
-
-    private void OnPartialSpeechResult(string partialText)
-    {
-        Debug.Log("Partial result: " + partialText);
-        uiText.text = partialText;
+        textToSpeech.Setting(languageCode, 1, 1); 
+        speechToText.Setting(languageCode);
     }
 }
